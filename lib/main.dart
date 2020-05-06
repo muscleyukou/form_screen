@@ -8,7 +8,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '自己紹介',
-      themeMode:ThemeMode.dark ,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        fontFamily:'Souma',
+      ),
       home: HomeScreen(),
     );
   }

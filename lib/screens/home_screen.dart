@@ -3,7 +3,7 @@ import 'package:flutterapp/parts/button_text.dart';
 import 'package:flutterapp/screens/confirm_screen.dart';
 
 enum Muscle { like, dislike }
-enum Training{one,two,three}
+enum Training { one, two, three }
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,21 +15,29 @@ class _HomeScreenState extends State<HomeScreen> {
   List _item = ['男', '女'];
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _mailController=TextEditingController();
+  final TextEditingController _mailController = TextEditingController();
+  String _name = '';
+  String _mail = '';
+  List<String> _txtList = ['1-3日', '2-5日', '6-7日'];
+  List<String> _txtListLike=['好き','嫌い'];
+
   //筋トレ好きか
   var _character = Muscle.like;
-  String _name='';
+
+
 
   void _onChanged(Muscle value) {
     setState(() {
       _character = value;
     });
   }
+
   //筋トレ頻度
-  var _frequency=Training.one;
+  var _frequency = Training.one;
+
   void _onTouched(Training value) {
     setState(() {
-      _frequency=value;
+      _frequency = value;
     });
   }
 
@@ -64,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: '確認画面へ進む',
                 color: Colors.white,
                 backgroundColor: Colors.greenAccent,
-                function:_nextPageFunction(),
+                function: _nextPageFunction(),
               ),
             ],
           ),
@@ -95,23 +103,28 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
 //メールフォーム
   _mailAdress() {
     return Column(
       children: <Widget>[
         Text(
           'メールアドレス',
-          style: TextStyle( fontSize: 20.0),
+          style: TextStyle(fontSize: 20.0),
         ),
         TextFormField(
           textAlign: TextAlign.center,
           maxLines: 1,
           controller: _mailController,
           keyboardType: TextInputType.text,
+          onSaved: (String value) {
+            _mail = value;
+          },
         ),
       ],
     );
   }
+
   //性別
   _genderInput() {
     return Center(
@@ -139,22 +152,23 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   //筋トレ好きか
   _questionMuscle() {
-  return  Column(
+    return Column(
       children: <Widget>[
-        Text('筋トレは好きですか？？',textAlign: TextAlign.left,),
+        Text('筋トレは好きですか？？', textAlign: TextAlign.left,),
         RadioListTile(
           value: Muscle.like,
           groupValue: _character,
           onChanged: _onChanged,
-          title: Text('好き'),
+          title: Text(_txtListLike[0]),
         ),
         RadioListTile(
           value: Muscle.dislike,
           groupValue: _character,
           onChanged: _onChanged,
-          title: Text('嫌い'),
+          title: Text(_txtListLike[1]),
         ),
       ],
     );
@@ -162,38 +176,66 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //筋トレ頻度
   _questionMuscleFrequency() {
-    return  Column(
+    return Column(
       children: <Widget>[
-        Text('筋トレはどのくらいの頻度で行なっていますか？？',textAlign: TextAlign.left),
+        Text('筋トレはどのくらいの頻度で行なっていますか？？', textAlign: TextAlign.left),
         RadioListTile(
           value: Training.one,
           groupValue: _frequency,
           onChanged: _onTouched,
-          title: Text('1-3日'),
+          title: Text(_txtList[0]),
         ),
         RadioListTile(
-          value:Training.two,
+          value: Training.two,
           groupValue: _frequency,
           onChanged: _onTouched,
-          title: Text('3-5日'),
+          title: Text(_txtList[1]),
         ),
         RadioListTile(
-          value:Training.three,
+          value: Training.three,
           groupValue: _frequency,
           onChanged: _onTouched,
-          title: Text('6-7日'),
+          title: Text(_txtList[2]),
         ),
       ],
     );
   }
 
   _nextPageFunction() {
-        return ()=>Navigator.push(context,MaterialPageRoute(builder:
-        (context)=>ConfirmScreen(
-       userName: _name,
-    )));
+    return () =>
+        Navigator.push(context, MaterialPageRoute(builder:
+            (context) =>
+            ConfirmScreen(
+              userName: _nameController.text,
+              mail: _mailController.text,
+              gender: _selectedItem,
+             questionFirst:_trainingText() ,
+              questionSecond: _frequencyText(),
+            )));
   }
-
+  _trainingText() {
+    switch (_character) {
+      case Muscle.like:
+        return _txtListLike[0];
+        break;
+      case Muscle.dislike:
+        return _txtListLike[1];
+        break;
+    }
+  }
+  _frequencyText() {
+    switch (_frequency) {
+      case Training.one:
+        return _txtList[0];
+        break;
+      case Training.two:
+        return _txtList[1];
+        break;
+      case Training.three:
+        return _txtList[2];
+        break;
+    }
+  }
 
 
 }
