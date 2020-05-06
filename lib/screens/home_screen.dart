@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/parts/button_text.dart';
+import 'package:flutterapp/screens/confirm_screen.dart';
 
 enum Muscle { like, dislike }
+enum Training{one,two,three}
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,45 +14,112 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedItem = '男';
   List _item = ['男', '女'];
 
-  final _controller = TextEditingController();
-
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _mailController=TextEditingController();
+  //筋トレ好きか
   var _character = Muscle.like;
+  String _name='';
+
   void _onChanged(Muscle value) {
     setState(() {
       _character = value;
     });
   }
+  //筋トレ頻度
+  var _frequency=Training.one;
+  void _onTouched(Training value) {
+    setState(() {
+      _frequency=value;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '筋肉アプリ',
-          style: TextStyle(fontSize: 25.0),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Question Trainng',
+            style: TextStyle(fontSize: 25.0),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.cyanAccent,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.cyanAccent,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _nameInput(),
-            _genderInput(),
-            _questionMuscle(),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 10.0,),
+              _nameInput(),
+              SizedBox(height: 10.0,),
+              _mailAdress(),
+              SizedBox(height: 10.0,),
+              _genderInput(),
+              SizedBox(height: 25.0,),
+              _questionMuscle(),
+              SizedBox(height: 10.0,),
+              _questionMuscleFrequency(),
+              SizedBox(height: 30.0,),
+              ButtonInText(
+                text: '確認画面へ進む',
+                color: Colors.white,
+                backgroundColor: Colors.greenAccent,
+                function:_nextPageFunction(),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+
+//名前入力蘭
+  _nameInput() {
+    return Column(
+      children: <Widget>[
+        Text(
+          '名前',
+          style: TextStyle(fontSize: 20.0),
+        ),
+        TextFormField(
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          maxLength: 10,
+          controller: _nameController,
+          keyboardType: TextInputType.text,
+          onSaved: (String value) {
+            _name = value;
+          },
+        ),
+      ],
+    );
+  }
+//メールフォーム
+  _mailAdress() {
+    return Column(
+      children: <Widget>[
+        Text(
+          'メールアドレス',
+          style: TextStyle( fontSize: 20.0),
+        ),
+        TextFormField(
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          controller: _mailController,
+          keyboardType: TextInputType.text,
+        ),
+      ],
+    );
+  }
+  //性別
   _genderInput() {
     return Center(
       child: Column(
         children: <Widget>[
           Text(
-            '名前',
-            style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+            '性別',
+            style: TextStyle(fontSize: 20.0,),
           ),
           DropdownButton(
             items: _item.map((value) {
@@ -69,29 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  _nameInput() {
-    return Column(
-      children: <Widget>[
-        Text(
-          '名前',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
-        ),
-        TextField(
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          maxLength: 10,
-          controller: _controller,
-          keyboardType: TextInputType.text,
-        ),
-      ],
-    );
-  }
-
+  //筋トレ好きか
   _questionMuscle() {
   return  Column(
       children: <Widget>[
-        Text('筋肉は好きですか？？'),
+        Text('筋トレは好きですか？？',textAlign: TextAlign.left,),
         RadioListTile(
           value: Muscle.like,
           groupValue: _character,
@@ -107,4 +159,41 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
+  //筋トレ頻度
+  _questionMuscleFrequency() {
+    return  Column(
+      children: <Widget>[
+        Text('筋トレはどのくらいの頻度で行なっていますか？？',textAlign: TextAlign.left),
+        RadioListTile(
+          value: Training.one,
+          groupValue: _frequency,
+          onChanged: _onTouched,
+          title: Text('1-3日'),
+        ),
+        RadioListTile(
+          value:Training.two,
+          groupValue: _frequency,
+          onChanged: _onTouched,
+          title: Text('3-5日'),
+        ),
+        RadioListTile(
+          value:Training.three,
+          groupValue: _frequency,
+          onChanged: _onTouched,
+          title: Text('6-7日'),
+        ),
+      ],
+    );
+  }
+
+  _nextPageFunction() {
+        return ()=>Navigator.push(context,MaterialPageRoute(builder:
+        (context)=>ConfirmScreen(
+       userName: _name,
+    )));
+  }
+
+
+
 }
